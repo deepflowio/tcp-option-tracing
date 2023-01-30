@@ -1,0 +1,10 @@
+.top.ko.cmd
+.top.mod.o.cmd
+.top.o.cmd
+Module.symvers
+modules.order
+top.ko
+top.mod.c
+top.mod.o
+top.o
+.tmp_versions
