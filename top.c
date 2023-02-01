@@ -39,6 +39,21 @@ struct __attribute__((packed)) tcp_option_pid {
 #error "Please update your kernel"
 #endif
 
+#if defined(DISABLE_SAMPLING)
+static bool is_cover_rounded_up_seq(struct sk_buff *skb)
+{
+	return true;
+}
+#else
+static bool is_cover_rounded_up_seq(struct sk_buff *skb)
+{
+	unsigned int seq = ntohl(tcp_hdr(skb)->seq);
+	unsigned int len = skb->len - ip_hdrlen(skb) - tcp_hdrlen(skb);
+	unsigned int rounded_up_seq = seq | 0x3FFFU;
+	return rounded_up_seq < seq + len;
+}
+#endif
+
 // Centos7 modified the function signature without updating the kernel version
 // number. Currently, there should be no other version 3.10 kernel running
 // except CentOS 7
@@ -85,6 +100,10 @@ static unsigned int add_tcp_option_pid(unsigned int hooknum, struct sk_buff *skb
 
 	tcph = tcp_hdr(skb);
 	if (!tcph->psh && !(tcph->syn && !tcph->ack))
+		goto out;
+
+	/* modify a push packet when every 16KB of data are delivered. */
+	if (tcph->psh && !is_cover_rounded_up_seq(skb))
 		goto out;
 
 	/* skb length and tcp option length checking */
