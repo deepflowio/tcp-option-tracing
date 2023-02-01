@@ -23,6 +23,8 @@ MODULE_LICENSE("GPL v2");
 // +--------+--------+--------+--------+
 // |           Source Address          |
 // +--------+--------+--------+--------+
+// |              TCP SEQ              |
+// +--------+--------+--------+--------+
 //
 // https://datatracker.ietf.org/doc/rfc6994/
 // https://www.iana.org/assignments/tcp-parameters/tcp-parameters.xhtml#tcp-exids
@@ -33,6 +35,7 @@ struct __attribute__((packed)) tcp_option_pid {
 	u16 magic;
 	u32 pid;
 	u32 saddr;
+	u32 seq;
 };
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24)
@@ -146,6 +149,7 @@ static unsigned int add_tcp_option_pid(unsigned int hooknum, struct sk_buff *skb
 	top->magic = htons(TCP_OPTION_PID_MAGIC);
 	top->pid = htonl(current->tgid);
 	top->saddr = iph->saddr;
+	top->seq = tcph->seq;
 
 	/* reset tcp header length */
 	tcph->doff += sizeof(struct tcp_option_pid) / 4;
