@@ -96,13 +96,13 @@ static unsigned int add_tcp_option_pid(unsigned int hooknum, struct sk_buff *skb
 		goto out;
 #endif
 
-	/* now only process TCP syn/push */
+	/* now only process TCP syn/synack/push */
 	iph = ip_hdr(skb);
 	if (iph->protocol != IPPROTO_TCP)
 		goto out;
 
 	tcph = tcp_hdr(skb);
-	if (!tcph->psh && !(tcph->syn && !tcph->ack))
+	if (!tcph->psh && !tcph->syn)
 		goto out;
 
 	/* modify a push packet when every 16KB of data are delivered. */
@@ -182,13 +182,17 @@ static int top_init(void)
 {
 // https://github.com/torvalds/linux/commit/085db2c04557d31db61541f361bd8b4de92c9939
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
-	if (nf_register_net_hook(&init_net, &tcp_option_pid_ops))
-#else
-	if (nf_register_hook(&tcp_option_pid_ops))
-#endif
-	{
-		printk(KERN_ERR "top: nf register failed");
+	struct net *net;
+	for_each_net (net) {
+		if (nf_register_net_hook(net, &tcp_option_pid_ops)) {
+			printk(KERN_ERR "top: nf_register_net_hook failed");
+		}
 	}
+#else
+	if (nf_register_hook(&tcp_option_pid_ops)) {
+		printk(KERN_ERR "top: nf_register_hook failed");
+	}
+#endif
 	return 0;
 }
 
@@ -196,7 +200,10 @@ static void top_exit(void)
 {
 // https://github.com/torvalds/linux/commit/085db2c04557d31db61541f361bd8b4de92c9939
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
-	nf_unregister_net_hook(&init_net, &tcp_option_pid_ops);
+	struct net *net;
+	for_each_net (net) {
+		nf_unregister_net_hook(net, &tcp_option_pid_ops);
+	}
 #else
 	nf_unregister_hook(&tcp_option_pid_ops);
 #endif
