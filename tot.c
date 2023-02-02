@@ -1,5 +1,5 @@
 /**
- * TCP Option Pid
+ * TCP Option Tracing
  */
 #include <linux/ip.h>
 #include <linux/module.h>
