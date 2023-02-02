@@ -1,0 +1,27 @@
+{
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"C_Cpp.clang_format_sortIncludes": true,
+	"C_Cpp.dimInactiveRegions": false,
+	"editor.tabSize": 8,
+	"C_Cpp.intelliSenseEngine": "default",
+	"[shellscript]": {
+		"files.eol": "\n"
+	},
+	"C_Cpp.default.includePath": [
+		"/usr/src/linux/include",
+		"/usr/src/linux/arch/x86/include",
+		"/usr/src/linux/arch/x86/include/generated",
+		"/usr/src/kernels/3.10.0-1160.81.1.el7.x86_64/include",
+		"/usr/src/kernels/3.10.0-1160.81.1.el7.x86_64/arch/x86/include",
+		"/usr/src/kernels/3.10.0-1160.81.1.el7.x86_64/arch/x86/include/generated",
+		"${workspaceFolder}",
+	],
+	"C_Cpp.default.defines": [
+		"MODULE",
+		"__KERNEL__"
+	],
+	"C_Cpp.autoAddFileAssociations": false,
+	"editor.formatOnSave": true,
+	"C_Cpp.errorSquiggles": "disabled",
+}
