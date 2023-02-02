@@ -1,6 +1,6 @@
 ifneq ($(KERNELRELEASE),)
 
-obj-m := top.o
+obj-m := tot.o
 ccflags-y += -I$(src)
 
 ifeq ($(DISABLE_SAMPLING), true)
