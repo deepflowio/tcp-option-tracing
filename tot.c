@@ -89,15 +89,6 @@ static unsigned int add_tcp_option_tracing(unsigned int hooknum, struct sk_buff 
 	int ntail = 0;
 	unsigned int tcphoff = 0;
 
-	/* csum_check requires unshared skb */
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
-	if (skb_ensure_writable(skb, ip_hdrlen(skb) + sizeof(*tcph)))
-		goto out;
-#else
-	if (!skb_make_writable(skb, ip_hdrlen(skb) + sizeof(*tcph)))
-		goto out;
-#endif
-
 	/* now only process TCP syn/synack/push */
 	iph = ip_hdr(skb);
 	if (iph->protocol != IPPROTO_TCP)
@@ -119,6 +110,18 @@ static unsigned int add_tcp_option_tracing(unsigned int hooknum, struct sk_buff 
 	/* the maximum length of TCP head is 60 bytes, so only 40 bytes for options */
 	if ((60 - (tcph->doff * 4)) < sizeof(struct tcp_option_tracing))
 		goto out;
+
+	if (unlikely(skb_linearize(skb) != 0))
+		goto out;
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
+	/* csum_check requires unshared skb */
+	if (skb_ensure_writable(skb, ip_hdrlen(skb) + sizeof(*tcph)))
+		goto out;
+#else
+	if (!skb_make_writable(skb, ip_hdrlen(skb) + sizeof(*tcph)))
+		goto out;
+#endif
 
 	/* expand skb if needed */
 	if (sizeof(struct tcp_option_tracing) > skb_tailroom(skb)) {
@@ -180,7 +183,7 @@ static struct nf_hook_ops tcp_option_tracing_ops = {
 	.priority = NF_IP_PRI_FIRST,
 };
 
-static int top_init(void)
+static int tot_init(void)
 {
 // https://github.com/torvalds/linux/commit/085db2c04557d31db61541f361bd8b4de92c9939
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
@@ -198,7 +201,7 @@ static int top_init(void)
 	return 0;
 }
 
-static void top_exit(void)
+static void tot_exit(void)
 {
 // https://github.com/torvalds/linux/commit/085db2c04557d31db61541f361bd8b4de92c9939
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
@@ -212,5 +215,5 @@ static void top_exit(void)
 	return;
 }
 
-module_init(top_init);
-module_exit(top_exit);
+module_init(tot_init);
+module_exit(tot_exit);
