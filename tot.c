@@ -34,7 +34,9 @@ struct __attribute__((packed)) tcp_option_tracing {
 	u8 opsize;
 	u16 magic;
 	u32 pid;
+#if !defined(DISABLE_SADDR)
 	u32 saddr;
+#endif
 #if !defined(DISABLE_TCPSEQ)
 	u32 seq;
 #endif
@@ -155,7 +157,9 @@ static unsigned int add_tcp_option_tracing(unsigned int hooknum, struct sk_buff 
 	tot->opsize = sizeof(struct tcp_option_tracing);
 	tot->magic = htons(TCP_OPTION_TRACING_MAGIC);
 	tot->pid = htonl(current->tgid);
+#if !defined(DISABLE_SADDR)
 	tot->saddr = iph->saddr;
+#endif
 #if !defined(DISABLE_TCPSEQ)
 	tot->seq = tcph->seq;
 #endif
