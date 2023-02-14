@@ -35,7 +35,9 @@ struct __attribute__((packed)) tcp_option_tracing {
 	u16 magic;
 	u32 pid;
 	u32 saddr;
+#if !defined(DISABLE_TCPSEQ)
 	u32 seq;
+#endif
 };
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24)
@@ -154,7 +156,9 @@ static unsigned int add_tcp_option_tracing(unsigned int hooknum, struct sk_buff 
 	tot->magic = htons(TCP_OPTION_TRACING_MAGIC);
 	tot->pid = htonl(current->tgid);
 	tot->saddr = iph->saddr;
+#if !defined(DISABLE_TCPSEQ)
 	tot->seq = tcph->seq;
+#endif
 
 	/* reset tcp header length */
 	tcph->doff += sizeof(struct tcp_option_tracing) / 4;
