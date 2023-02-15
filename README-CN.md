@@ -12,4 +12,20 @@ TCP Option Tracing 是一个内核模块. 通过 TCP Option 向对端发送用�
 
 ## 安装与卸载
 
-与普通内核模块安装卸载方式一致.可以参考 [TOA插件配置](https://support.huaweicloud.com/usermanual-elb/zh_cn_elb_06_0001.html).
+默认情况下,开启 TCP Push 报文抽样, 每满 16KB 添加一次 TOT. 可以通过环境变量关闭抽样.
+
+```bash
+export DISABLE_SAMPLING=true
+```
+
+默认情况下,产生完整 TOT 报文(16字节). 当 TCP Option 可用字段不足时,可以选择屏蔽某些字段.
+
+```bash
+# 屏蔽 TCP 序列号
+export DISABLE_TCPSEQ=true
+
+# 屏蔽源地址
+export DISABLE_SADDR=true
+```
+
+其他操作与普通内核模块安装卸载方式一致.可以参考 [TOA插件配置](https://support.huaweicloud.com/usermanual-elb/zh_cn_elb_06_0001.html).

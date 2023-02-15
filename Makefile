@@ -7,6 +7,14 @@ ifeq ($(DISABLE_SAMPLING), true)
 ccflags-y += -DDISABLE_SAMPLING
 endif
 
+ifeq ($(DISABLE_TCPSEQ), true)
+ccflags-y += -DDISABLE_TCPSEQ
+endif
+
+ifeq ($(DISABLE_SADDR), true)
+ccflags-y += -DDISABLE_SADDR
+endif
+
 else
 
 KERNELRELEASE ?= $(shell uname -r)
