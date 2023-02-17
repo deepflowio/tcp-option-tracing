@@ -1,3 +1,15 @@
-## supported kernel
+## Dependencies
 
-eBPF supports 5.10+ kernels. BTF is also required to be enabled.
+### compiler
+
+- clang/clang++ 11.0.1
+
+### static libs
+
+- libbpf 0.3
+- libelf 0.183
+- libz 1.2.11
+
+### kernel
+
+- linux kernel 5.10 with CONFIG_DEBUG_INFO_BTF=y
