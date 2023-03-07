@@ -1,0 +1,11 @@
+{
+	"C_Cpp.intelliSenseEngine": "Tag Parser",
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"C_Cpp.clang_format_sortIncludes": true,
+	"editor.formatOnSave": true,
+	"C_Cpp.autoAddFileAssociations": false,
+	"[shellscript]": {
+		"files.eol": "\n"
+	},
+}

@@ -4,8 +4,16 @@
 *.ko
 *.mod.c
 *.o
+*.mod.cmd
+*.mod
 
 Module.symvers
 modules.order
 
 .tmp_versions
+.Module.symvers.cmd
+.modules.order.cmd
+
+tot
+vmlinux.h
+tot.skel.h
