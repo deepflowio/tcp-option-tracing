@@ -1,0 +1,7 @@
+FROM debian:11
+RUN apt-get update && apt-get install -y make bpftool clang libbpf-dev
+COPY . /tot-ebpf
+WORKDIR /tot-ebpf
+RUN make
+ENTRYPOINT ["/tot-ebpf/docker-entrypoint.sh"]
+CMD ["/tot-ebpf/tot"]
