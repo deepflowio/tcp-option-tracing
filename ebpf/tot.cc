@@ -14,26 +14,6 @@ static void handle_signal(int sig)
 	running = false;
 }
 
-static std::string current_cgroup_mount_path()
-{
-	std::ifstream ifs;
-	std::string line;
-	std::string type, path;
-
-	ifs.open("/proc/self/mounts");
-	while (std::getline(ifs, line)) {
-		std::istringstream iss(line);
-		if (!(iss >> type >> path))
-			break;
-
-		if (type == "cgroup2")
-			break;
-	}
-	ifs.close();
-
-	return path;
-}
-
 int main()
 {
 	struct tot_bpf *skel = NULL;
@@ -47,8 +27,7 @@ int main()
 
 	assert(!tot_bpf__attach(skel));
 
-	std::string cgroup_mount_path = current_cgroup_mount_path();
-	cgroup_fd = open(cgroup_mount_path.data(), O_RDONLY);
+	cgroup_fd = open("/sys/fs/cgroup", O_RDONLY);
 	assert(cgroup_fd);
 	skel->links.sockops_write_tcp_options =
 		bpf_program__attach_cgroup(skel->progs.sockops_write_tcp_options, cgroup_fd);
